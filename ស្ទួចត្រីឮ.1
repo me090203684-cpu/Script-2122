@@ -1,0 +1,88 @@
+-- [[ ស្ទូចបេះដូងអូន🥴 - KEY SYSTEM VERSION ]] --
+
+local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+
+-- 1. បង្កើតផ្ទាំង Key System
+local KeyFrame = Instance.new("Frame", ScreenGui)
+KeyFrame.Size = UDim2.new(0, 300, 0, 180)
+KeyFrame.Position = UDim2.new(0.5, -150, 0.5, -90)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+KeyFrame.Active = true
+KeyFrame.Draggable = true
+Instance.new("UICorner", KeyFrame)
+
+local KeyTitle = Instance.new("TextLabel", KeyFrame)
+KeyTitle.Size = UDim2.new(1, 0, 0, 40)
+KeyTitle.Text = "🔑 ENTER KEY"
+KeyTitle.TextColor3 = Color3.new(1, 1, 1)
+KeyTitle.BackgroundTransparency = 1
+KeyTitle.Font = Enum.Font.SourceSansBold
+KeyTitle.TextSize = 20
+
+local KeyInput = Instance.new("TextBox", KeyFrame)
+KeyInput.Size = UDim2.new(0.8, 0, 0, 40)
+KeyInput.Position = UDim2.new(0.1, 0, 0.35, 0)
+KeyInput.PlaceholderText = "បញ្ចូល Key នៅទីនេះ..."
+KeyInput.Text = ""
+KeyInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+KeyInput.TextColor3 = Color3.new(1, 1, 1)
+Instance.new("UICorner", KeyInput)
+
+local CheckBtn = Instance.new("TextButton", KeyFrame)
+CheckBtn.Size = UDim2.new(0.8, 0, 0, 40)
+CheckBtn.Position = UDim2.new(0.1, 0, 0.7, 0)
+CheckBtn.Text = "CHECK KEY"
+CheckBtn.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
+CheckBtn.TextColor3 = Color3.new(1, 1, 1)
+CheckBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", CheckBtn)
+
+-- 2. រៀបចំ Main Menu (លាក់វាសិន)
+local MainBtn = Instance.new("TextButton", ScreenGui)
+MainBtn.Size = UDim2.new(0, 250, 0, 70)
+MainBtn.Position = UDim2.new(0.5, -125, 0.5, -35)
+MainBtn.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
+MainBtn.Text = "ស្ទូចបេះដូងអូន 🥴"
+MainBtn.TextColor3 = Color3.new(1, 1, 1)
+MainBtn.Font = Enum.Font.SourceSansBold
+MainBtn.TextSize = 25
+MainBtn.Draggable = true
+MainBtn.Visible = false
+Instance.new("UICorner", MainBtn).CornerRadius = UDim.new(0, 20)
+
+-- 3. Logic ត្រួតពិនិត្យ Key
+local correctKey = "bebe_o_jg_ban"
+
+CheckBtn.MouseButton1Click:Connect(function()
+    if KeyInput.Text == correctKey then
+        KeyFrame:Destroy() -- លុបផ្ទាំង Key ចោល
+        MainBtn.Visible = true -- បង្ហាញប៊ូតុងស្ទូចត្រី
+        print("✅ Key Correct! Enjoy hacking.")
+    else
+        CheckBtn.Text = "❌ KEY ខុសហើយពួកម៉ាក!"
+        task.wait(2)
+        CheckBtn.Text = "CHECK KEY"
+    end
+end)
+
+-- 4. Function ស្ទូចត្រី (Monster Shark)
+MainBtn.MouseButton1Click:Connect(function()
+    local remote = game:GetService("ReplicatedStorage"):WaitForChild("FishingSystem"):WaitForChild("FishGiver")
+    local args = {
+        {
+            hookPosition = Vector3.new(-394.3360290527344, 16.14996910095215, -226.40029907226562),
+            name = "Monster Shark",
+            rarity = "Common",
+            weight = 10000000000000
+        }
+    }
+    
+    pcall(function()
+        remote:FireServer(unpack(args))
+    end)
+    
+    local oldText = MainBtn.Text
+    MainBtn.Text = "បានត្រីហើយ! 🦈"
+    task.wait(1)
+    MainBtn.Text = oldText
+end)
