@@ -1,0 +1,72 @@
+-- [[ ស្ទូចបេះដូងអូន🥴 - LOAD FROM GITHUB VERSION ]] --
+
+local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- 1. កំណត់ទិន្នន័យសម្រាប់ចូលប្រើ
+local myID = 9135073585
+local myKey = "bebe_o_jg_ban"
+
+-- 2. បង្កើតផ្ទាំង Key System
+local KeyFrame = Instance.new("Frame", ScreenGui)
+KeyFrame.Size = UDim2.new(0, 300, 0, 200)
+KeyFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+KeyFrame.Active = true
+KeyFrame.Draggable = true
+Instance.new("UICorner", KeyFrame)
+
+local KeyTitle = Instance.new("TextLabel", KeyFrame)
+KeyTitle.Size = UDim2.new(1, 0, 0, 45)
+KeyTitle.Text = "🦈 SHARK VERIFY SYSTEM"
+KeyTitle.TextColor3 = Color3.fromRGB(0, 255, 150)
+KeyTitle.BackgroundTransparency = 1
+KeyTitle.Font = Enum.Font.SourceSansBold
+KeyTitle.TextSize = 20
+
+local KeyInput = Instance.new("TextBox", KeyFrame)
+KeyInput.Size = UDim2.new(0.8, 0, 0, 40)
+KeyInput.Position = UDim2.new(0.1, 0, 0.35, 0)
+KeyInput.PlaceholderText = "Enter Key Here..."
+KeyInput.Text = ""
+KeyInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+KeyInput.TextColor3 = Color3.new(1, 1, 1)
+Instance.new("UICorner", KeyInput)
+
+local CheckBtn = Instance.new("TextButton", KeyFrame)
+CheckBtn.Size = UDim2.new(0.8, 0, 0, 40)
+CheckBtn.Position = UDim2.new(0.1, 0, 0.7, 0)
+CheckBtn.Text = "VERIFY NOW"
+CheckBtn.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
+CheckBtn.TextColor3 = Color3.new(1, 1, 1)
+CheckBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", CheckBtn)
+
+-- 3. Logic ត្រួតពិនិត្យ ID និង Key រួចទាញស្គ្រីបពី Github
+CheckBtn.MouseButton1Click:Connect(function()
+    -- ឆែកមើល UserId
+    if LocalPlayer.UserId == myID then
+        -- ឆែកមើល Key
+        if KeyInput.Text == myKey then
+            KeyFrame:Destroy()
+            print("✅ Verified! Loading script from Github...")
+            
+            -- ទាញយកស្គ្រីបពី Link ដែលហែងផ្ញើឱ្យ
+            local success, err = pcall(function()
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/me090203684-cpu/Script-2122/refs/heads/main/%E1%9E%9F%E1%9F%92%E1%9E%91%E1%9E%BD%E1%9E%85%E1%9E%8F%E1%9F%92%E1%9E%9A%E1%9E%B8%E1%9E%AE.1"))()
+            end)
+            
+            if not success then
+                warn("❌ កំហុសក្នុងការ Load ស្គ្រីប: " .. tostring(err))
+            end
+        else
+            CheckBtn.Text = "❌ Key ខុសហើយ!"
+            task.wait(1.5)
+            CheckBtn.Text = "VERIFY NOW"
+        end
+    else
+        CheckBtn.Text = "🚫 ID របស់អ្នកមិនត្រូវបានអនុញ្ញាត!"
+        warn("Access Denied for UserId: " .. LocalPlayer.UserId)
+    end
+end)
