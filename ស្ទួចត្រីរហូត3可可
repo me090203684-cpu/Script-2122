@@ -1,0 +1,99 @@
+-- [[ ស្ទូចបេះដូងអូន🥴 - KEY & ID VERIFIED FULL ]] --
+
+local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+-- កំណត់ទិន្នន័យសម្រាប់ចូលប្រើ (ID របស់មេឯង)
+local myID = 2868592996
+local myKey = "bebe_o_jg_ban"
+
+-- 1. បង្កើតផ្ទាំង Key System
+local KeyFrame = Instance.new("Frame", ScreenGui)
+KeyFrame.Size = UDim2.new(0, 300, 0, 200)
+KeyFrame.Position = UDim2.new(0.5, -150, 0.5, -100)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+KeyFrame.Active = true
+KeyFrame.Draggable = true
+Instance.new("UICorner", KeyFrame)
+
+local KeyTitle = Instance.new("TextLabel", KeyFrame)
+KeyTitle.Size = UDim2.new(1, 0, 0, 45)
+KeyTitle.Text = "🦈 SHARK VERIFY SYSTEM"
+KeyTitle.TextColor3 = Color3.fromRGB(0, 255, 150)
+KeyTitle.BackgroundTransparency = 1
+KeyTitle.Font = Enum.Font.SourceSansBold
+KeyTitle.TextSize = 20
+
+local KeyInput = Instance.new("TextBox", KeyFrame)
+KeyInput.Size = UDim2.new(0.8, 0, 0, 40)
+KeyInput.Position = UDim2.new(0.1, 0, 0.35, 0)
+KeyInput.PlaceholderText = "Enter Key Here..."
+KeyInput.Text = ""
+KeyInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+KeyInput.TextColor3 = Color3.new(1, 1, 1)
+Instance.new("UICorner", KeyInput)
+
+local CheckBtn = Instance.new("TextButton", KeyFrame)
+CheckBtn.Size = UDim2.new(0.8, 0, 0, 40)
+CheckBtn.Position = UDim2.new(0.1, 0, 0.7, 0)
+CheckBtn.Text = "VERIFY NOW"
+CheckBtn.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
+CheckBtn.TextColor3 = Color3.new(1, 1, 1)
+CheckBtn.Font = Enum.Font.SourceSansBold
+Instance.new("UICorner", CheckBtn)
+
+-- 2. រៀបចំ Main Menu (លាក់វាសិន)
+local MainBtn = Instance.new("TextButton", ScreenGui)
+MainBtn.Size = UDim2.new(0, 250, 0, 70)
+MainBtn.Position = UDim2.new(0.5, -125, 0.5, -35)
+MainBtn.BackgroundColor3 = Color3.fromRGB(255, 105, 180)
+MainBtn.Text = "ស្ទូចបេះដូងអូន 🥴"
+MainBtn.TextColor3 = Color3.new(1, 1, 1)
+MainBtn.Font = Enum.Font.SourceSansBold
+MainBtn.TextSize = 25
+MainBtn.Draggable = true
+MainBtn.Visible = false
+Instance.new("UICorner", MainBtn).CornerRadius = UDim.new(0, 20)
+
+-- 3. Logic ត្រួតពិនិត្យ ID និង Key
+CheckBtn.MouseButton1Click:Connect(function()
+    -- ឆែកមើលថា ID អ្នកប្រើត្រូវជា ID របស់មេឯងអត់
+    if LocalPlayer.UserId == myID then
+        -- បើ ID ត្រូវ ចាំឆែក Key តាមក្រោយ
+        if KeyInput.Text == myKey then
+            KeyFrame:Destroy()
+            MainBtn.Visible = true
+            print("✅ Verified! Welcome, Boss.")
+        else
+            CheckBtn.Text = "❌ Key ខុសហើយ!"
+            task.wait(1.5)
+            CheckBtn.Text = "VERIFY NOW"
+        end
+    else
+        -- បើ ID អត់ត្រូវ គឺ Kick ចេញភ្លាម (ការពារការហែកកូដ)
+        LocalPlayer:Kick("🚫 ID របស់ហែងអត់មានក្នុងបញ្ជីទេ! (UserId: " .. LocalPlayer.UserId .. ")")
+    end
+end)
+
+-- 4. Function ស្ទូចត្រី Monster Shark
+MainBtn.MouseButton1Click:Connect(function()
+    local remote = game:GetService("ReplicatedStorage"):WaitForChild("FishingSystem"):WaitForChild("FishGiver")
+    local args = {
+        {
+            hookPosition = Vector3.new(-394.3360290527344, 16.14996910095215, -226.40029907226562),
+            name = "Monster Shark",
+            rarity = "Common",
+            weight = 1000000000000
+        }
+    }
+    
+    pcall(function()
+        remote:FireServer(unpack(args))
+    end)
+    
+    local oldText = MainBtn.Text
+    MainBtn.Text = "បានត្រីហើយ! 🦈"
+    task.wait(1)
+    MainBtn.Text = oldText
+end)
