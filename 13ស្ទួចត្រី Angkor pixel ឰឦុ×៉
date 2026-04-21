@@ -1,0 +1,136 @@
+-- [[ 505 FISH🐠 - KEY SYSTEM & ID CHECK (UPDATED) ]] --
+
+local targetID = 8371512211
+local correctKey = "505_fish"
+local player = game.Players.LocalPlayer
+
+-- 1. ឆែកមើល ID អ្នកប្រើ (Security Check)
+if player.UserId ~= targetID then
+    player:Kick("Key របស់អ្នកមិនត្រូវទេសុំ Buy Script ពីអ្នកបង្កើត 505")
+    return
+end
+
+local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+ScreenGui.Name = "505Security"
+
+-- [[ ផ្នែក Key System UI ]] --
+local KeyFrame = Instance.new("Frame", ScreenGui)
+KeyFrame.Size = UDim2.new(0, 300, 0, 150)
+KeyFrame.Position = UDim2.new(0.5, -150, 0.5, -75)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Instance.new("UICorner", KeyFrame)
+
+local KeyTitle = Instance.new("TextLabel", KeyFrame)
+KeyTitle.Size = UDim2.new(1, 0, 0, 40)
+KeyTitle.Text = "បញ្ចូល KEY ដើម្បីប្រើប្រាស់"
+KeyTitle.TextColor3 = Color3.new(1, 1, 1)
+KeyTitle.Font = Enum.Font.SourceSansBold
+KeyTitle.TextSize = 20
+KeyTitle.BackgroundTransparency = 1
+
+local KeyInput = Instance.new("TextBox", KeyFrame)
+KeyInput.Size = UDim2.new(0.8, 0, 0, 40)
+KeyInput.Position = UDim2.new(0.1, 0, 0.35, 0)
+KeyInput.PlaceholderText = "បញ្ចូល Key នៅទីនេះ..."
+KeyInput.Text = ""
+KeyInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+KeyInput.TextColor3 = Color3.new(1, 1, 1)
+Instance.new("UICorner", KeyInput)
+
+local SubmitBtn = Instance.new("TextButton", KeyFrame)
+SubmitBtn.Size = UDim2.new(0.5, 0, 0, 35)
+SubmitBtn.Position = UDim2.new(0.25, 0, 0.7, 0)
+SubmitBtn.Text = "ផ្ទៀងផ្ទាត់"
+SubmitBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 255)
+SubmitBtn.TextColor3 = Color3.new(1, 1, 1)
+Instance.new("UICorner", SubmitBtn)
+
+-- [[ ផ្នែក Main Menu UI (លាក់ទុកសិន) ]] --
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Visible = false 
+MainFrame.Size = UDim2.new(0, 160, 0, 160)
+MainFrame.Position = UDim2.new(0.5, -80, 0.5, -80)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.Active = true
+MainFrame.Draggable = true
+Instance.new("UICorner", MainFrame)
+
+local TopBar = Instance.new("Frame", MainFrame)
+TopBar.Size = UDim2.new(1, 0, 0, 30)
+TopBar.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Instance.new("UICorner", TopBar)
+
+local Title = Instance.new("TextLabel", TopBar)
+Title.Size = UDim2.new(1, -30, 1, 0)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.Text = "505 fish🐠"
+Title.TextColor3 = Color3.new(1, 1, 1)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 16
+Title.BackgroundTransparency = 1
+
+local MinBtn = Instance.new("TextButton", TopBar)
+MinBtn.Size = UDim2.new(0, 25, 0, 25)
+MinBtn.Position = UDim2.new(1, -28, 0, 2)
+MinBtn.Text = "-"
+MinBtn.TextColor3 = Color3.new(1, 1, 1)
+MinBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+Instance.new("UICorner", MinBtn)
+
+local Content = Instance.new("Frame", MainFrame)
+Content.Size = UDim2.new(1, 0, 1, -30)
+Content.Position = UDim2.new(0, 0, 0, 30)
+Content.BackgroundTransparency = 1
+local UIList = Instance.new("UIListLayout", Content)
+UIList.Padding = UDim.new(0, 5)
+UIList.HorizontalAlignment = Enum.HorizontalAlignment.Center
+UIList.VerticalAlignment = Enum.VerticalAlignment.Center
+
+-- Function បង្កើតប៊ូតុង
+local function createBtn(text, color, callback)
+	local btn = Instance.new("TextButton", Content)
+	btn.Size = UDim2.new(0.9, 0, 0, 40)
+	btn.Text = text
+	btn.BackgroundColor3 = color
+	btn.TextColor3 = Color3.new(1, 1, 1)
+	btn.Font = Enum.Font.SourceSansBold
+	btn.TextSize = 18
+	Instance.new("UICorner", btn)
+	btn.MouseButton1Click:Connect(callback)
+end
+
+createBtn("hav fish", Color3.fromRGB(0, 120, 255), function()
+	game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("CastEvent"):FireServer(false, 100)
+end)
+
+createBtn("ttul fish", Color3.fromRGB(0, 180, 80), function()
+	game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("MiniGame"):FireServer(true)
+end)
+
+-- Logic ផ្ទៀងផ្ទាត់ Key
+SubmitBtn.MouseButton1Click:Connect(function()
+    if KeyInput.Text == correctKey then
+        KeyFrame.Visible = false
+        MainFrame.Visible = true
+    else
+        KeyInput.Text = ""
+        KeyInput.PlaceholderText = "Key មិនត្រឹមត្រូវទេ!"
+        KeyInput.PlaceholderColor3 = Color3.new(1, 0, 0)
+    end
+end)
+
+-- Logic បង្រួម Menu
+local isMinimized = false
+MinBtn.MouseButton1Click:Connect(function()
+	isMinimized = not isMinimized
+	if isMinimized then
+		Content.Visible = false
+		MainFrame:TweenSize(UDim2.new(0, 160, 0, 30), "Out", "Quart", 0.3, true)
+		MinBtn.Text = "+"
+	else
+		MainFrame:TweenSize(UDim2.new(0, 160, 0, 160), "Out", "Quart", 0.3, true)
+		task.wait(0.3)
+		Content.Visible = true
+		MinBtn.Text = "-"
+	end
+end)
