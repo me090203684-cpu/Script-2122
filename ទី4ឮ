@@ -1,5 +1,5 @@
 -- [[ ID CHECKER & KEY SYSTEM ]] --
-local targetID = 9135073585
+local targetID = 8290836110
 local correctKey = "Follow_Tiktok"
 local player = game:GetService("Players").LocalPlayer
 
