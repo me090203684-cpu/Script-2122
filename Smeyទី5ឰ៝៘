@@ -1,0 +1,147 @@
+-- [[ ID CHECKER & KEY SYSTEM ]] --
+local targetID = 8020566648
+local correctKey = "Follow_Tiktok"
+local player = game:GetService("Players").LocalPlayer
+
+-- ១. ឆែក ID ជាមុនសិន បើមិនត្រូវ Kick ចោលភ្លាម
+if player.UserId ~= targetID then
+    player:Kick("ID របស់អ្នកមិនត្រូវបានអនុញ្ញាតឱ្យប្រើស្គ្រីបនេះទេ! (ID Error)")
+    return
+end
+
+-- ២. បើ ID ត្រូវ ទើបឱ្យលោតផ្ទាំងដាក់ Key
+local KeyGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+local KeyFrame = Instance.new("Frame", KeyGui)
+local KeyInput = Instance.new("TextBox", KeyFrame)
+local SubmitBtn = Instance.new("TextButton", KeyFrame)
+local Title = Instance.new("TextLabel", KeyFrame)
+
+-- Design Key System UI
+KeyFrame.Size = UDim2.new(0, 300, 0, 160)
+KeyFrame.Position = UDim2.new(0.5, -150, 0.5, -80)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+KeyFrame.Active = true
+KeyFrame.Draggable = true
+Instance.new("UICorner", KeyFrame)
+
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Text = "ID VERIFIED - ENTER KEY"
+Title.TextColor3 = Color3.new(0, 1, 0) -- ពណ៌បៃតងបញ្ជាក់ថា ID ត្រូវ
+Title.BackgroundTransparency = 1
+Title.Font = Enum.Font.FredokaOne
+Title.TextSize = 18
+
+KeyInput.Size = UDim2.new(0.8, 0, 0, 40)
+KeyInput.Position = UDim2.new(0.1, 0, 0.35, 0)
+KeyInput.PlaceholderText = "Enter Key Here..."
+KeyInput.Text = ""
+KeyInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+KeyInput.TextColor3 = Color3.new(1, 1, 1)
+Instance.new("UICorner", KeyInput)
+
+SubmitBtn.Size = UDim2.new(0.6, 0, 0, 35)
+SubmitBtn.Position = UDim2.new(0.2, 0, 0.7, 0)
+SubmitBtn.Text = "SUBMIT"
+SubmitBtn.BackgroundColor3 = Color3.fromRGB(138, 43, 226)
+SubmitBtn.TextColor3 = Color3.new(1, 1, 1)
+SubmitBtn.Font = Enum.Font.FredokaOne
+Instance.new("UICorner", SubmitBtn)
+
+-- [[ មុខងារស្គ្រីប JoJo របស់ហែង ]] --
+local function StartJoJo()
+    local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+    ScreenGui.Name = "JOJO_VISU_FREE"
+
+    local MainBtn = Instance.new("TextButton", ScreenGui)
+    MainBtn.Size = UDim2.new(0, 220, 0, 70)
+    MainBtn.Position = UDim2.new(0.1, 0, 0.5, 0)
+    MainBtn.BackgroundColor3 = Color3.fromRGB(30, 0, 50)
+    MainBtn.Text = "⭐ JOJO: THE WORLD"
+    MainBtn.TextColor3 = Color3.fromRGB(138, 43, 226)
+    MainBtn.Font = Enum.Font.FredokaOne
+    MainBtn.TextSize = 22
+    MainBtn.Draggable = true
+
+    local UIStroke = Instance.new("UIStroke", MainBtn)
+    UIStroke.Thickness = 3
+    UIStroke.Color = Color3.fromRGB(255, 255, 255)
+    Instance.new("UICorner", MainBtn).CornerRadius = UDim.new(0, 15)
+
+    local isRunning = false
+    local frozenObjects = {}
+    local char = player.Character or player.CharacterAdded:Wait()
+    local root = char:WaitForChild("HumanoidRootPart")
+    local lighting = game:GetService("Lighting")
+    local colorCorrection = Instance.new("ColorCorrectionEffect", lighting)
+
+    local function playSafeSound(id)
+        local s = Instance.new("Sound", root)
+        s.SoundId = "rbxassetid://"..id
+        s.Volume = 5
+        s:Play()
+        game:GetService("Debris"):AddItem(s, 5)
+    end
+
+    local tsSphere = Instance.new("Part", root)
+    tsSphere.Material = Enum.Material.ForceField
+    tsSphere.Shape = Enum.PartType.Ball
+    tsSphere.CanCollide = false
+    tsSphere.CastShadow = false
+    tsSphere.Size = Vector3.new(0,0,0)
+    tsSphere.Color = Color3.fromRGB(138, 43, 226)
+    local w = Instance.new("Weld", tsSphere)
+    w.Part0 = tsSphere; w.Part1 = root
+
+    local syncRemote = game:GetService("ReplicatedStorage"):WaitForChild("Syncing"):WaitForChild("Sync")
+
+    MainBtn.MouseButton1Click:Connect(function()
+        isRunning = not isRunning
+        if isRunning then
+            MainBtn.Text = "🌑 TOKI WO TOMARE!"
+            MainBtn.BackgroundColor3 = Color3.fromRGB(75, 0, 130)
+            pcall(function() playSafeSound("5679636294") end)
+            colorCorrection.Enabled = true
+            colorCorrection.Saturation = -1
+            game:GetService("TweenService"):Create(tsSphere, TweenInfo.new(0.5), {Size = Vector3.new(150, 150, 150)}):Play()
+            for _, obj in pairs(workspace:GetDescendants()) do
+                if obj:IsA("Part") and not obj:IsDescendantOf(char) and not obj.Anchored then
+                    obj.Anchored = true
+                    table.insert(frozenObjects, obj)
+                end
+            end
+        else
+            MainBtn.Text = "⭐ JOJO: THE WORLD"
+            MainBtn.BackgroundColor3 = Color3.fromRGB(30, 0, 50)
+            pcall(function() playSafeSound("4329802996") end)
+            colorCorrection.Enabled = false
+            tsSphere.Size = Vector3.new(0,0,0)
+            for _, obj in pairs(frozenObjects) do if obj then obj.Anchored = false end end
+            frozenObjects = {}
+        end
+    end)
+
+    task.spawn(function()
+        while true do
+            if isRunning then
+                for _, p in pairs(game.Players:GetPlayers()) do
+                    if p ~= player then
+                        pcall(function() syncRemote:FireServer(p) end)
+                    end
+                end
+            end
+            task.wait(0.1)
+        end
+    end)
+end
+
+-- Key Verification
+SubmitBtn.MouseButton1Click:Connect(function()
+    if KeyInput.Text == correctKey then
+        KeyGui:Destroy()
+        StartJoJo()
+    else
+        KeyInput.Text = ""
+        KeyInput.PlaceholderText = "WRONG KEY!"
+    end
+end)
+               
