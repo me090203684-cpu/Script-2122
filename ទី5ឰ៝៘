@@ -1,0 +1,114 @@
+-- [[ MENU: JIS K - CARRY SYSTEM ]] --
+
+local player = game:GetService("Players").LocalPlayer
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-- ឆែកមើល Remote ជាមុនសិនដើម្បីកុំឱ្យ Error
+local CarryRemote = ReplicatedStorage:WaitForChild("CarryReplic"):WaitForChild("CarryRemotes"):WaitForChild("CarryRemote")
+local CarryChoice = ReplicatedStorage:WaitForChild("CarryReplic"):WaitForChild("CarryChoices"):WaitForChild("PiggyUpperBack")
+
+local function StartMenu()
+    local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+    local Main = Instance.new("Frame", ScreenGui)
+    local Title = Instance.new("TextLabel", Main)
+    local NameBox = Instance.new("TextBox", Main)
+    local CarryBtn = Instance.new("TextButton", Main)
+    local Suggestion = Instance.new("TextLabel", Main)
+
+    -- [ រៀបចំ UI - ស្ទីល JIS K ] --
+    Main.Size = UDim2.new(0, 250, 0, 150)
+    Main.Position = UDim2.new(0.5, -125, 0.5, -75)
+    Main.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    Main.BorderSizePixel = 0
+    Main.Active = true
+    Main.Draggable = true
+    Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 10)
+
+    Title.Size = UDim2.new(1, 0, 0, 35)
+    Title.Text = "JIS K"
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    Title.Font = Enum.Font.FredokaOne
+    Title.TextSize = 20
+    Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 10)
+
+    NameBox.Size = UDim2.new(0.9, 0, 0, 35)
+    NameBox.Position = UDim2.new(0.05, 0, 0.3, 0)
+    NameBox.PlaceholderText = "name player Carry..."
+    NameBox.Text = ""
+    NameBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    NameBox.TextColor3 = Color3.new(1, 1, 1)
+    Instance.new("UICorner", NameBox)
+
+    Suggestion.Size = UDim2.new(0.9, 0, 0, 20)
+    Suggestion.Position = UDim2.new(0.05, 0, 0.55, 0)
+    Suggestion.Text = ""
+    Suggestion.TextColor3 = Color3.fromRGB(180, 180, 180)
+    Suggestion.TextSize = 12
+    Suggestion.BackgroundTransparency = 1
+
+    CarryBtn.Size = UDim2.new(0.9, 0, 0, 40)
+    CarryBtn.Position = UDim2.new(0.05, 0, 0.7, 0)
+    CarryBtn.Text = "CARRY juj"
+    CarryBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+    CarryBtn.TextColor3 = Color3.new(1, 1, 1)
+    CarryBtn.Font = Enum.Font.FredokaOne
+    Instance.new("UICorner", CarryBtn)
+
+    -- [ ប្រព័ន្ធស្វែងរកឈ្មោះ Auto-Complete ] --
+    local targetPlayer = nil
+
+    NameBox:GetPropertyChangedSignal("Text"):Connect(function()
+        local input = NameBox.Text:lower()
+        targetPlayer = nil
+        Suggestion.Text = ""
+        
+        if #input >= 2 then
+            for _, p in pairs(Players:GetPlayers()) do
+                if p ~= player and (p.Name:lower():sub(1, #input) == input or p.DisplayName:lower():sub(1, #input) == input) then
+                    targetPlayer = p
+                    Suggestion.Text = "ng men៖ " .. p.DisplayName
+                    break
+                end
+            end
+        end
+    end)
+
+    -- [ មុខងារបាញ់ Remote Carry ] --
+    CarryBtn.MouseButton1Click:Connect(function()
+        if targetPlayer then
+            local args = {
+                {
+                    cmd = "Carry",
+                    carrychoicesss = CarryChoice,
+                    firstPlr = targetPlayer
+                }
+            }
+            -- បាញ់ Remote ទៅ Server
+            local success, err = pcall(function()
+                CarryRemote:FireServer(unpack(args))
+            end)
+            
+            if success then
+                CarryBtn.Text = "កំពុង Carry: " .. targetPlayer.DisplayName
+                CarryBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+            else
+                CarryBtn.Text = "Error!"
+                warn("Carry Error: " .. err)
+            end
+            
+            task.wait(1.5)
+            CarryBtn.Text = "CARRY ឥឡូវនេះ"
+            CarryBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+        else
+            NameBox.Text = ""
+            NameBox.PlaceholderText = "not see!"
+            task.wait(1)
+            NameBox.PlaceholderText = "name player Carry..."
+        end
+    end)
+end
+
+-- ដំណើរការ Menu
+StartMenu()
