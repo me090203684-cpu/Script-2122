@@ -1,0 +1,144 @@
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local UICorner = Instance.new("UICorner")
+local UIStroke = Instance.new("UIStroke")
+local Title = Instance.new("TextLabel")
+local NameBox = Instance.new("TextBox")
+local PushBtn = Instance.new("TextButton")
+local MiniBtn = Instance.new("TextButton") -- ប៊ូតុងបង្រួម ( - )
+local OpenBtn = Instance.new("TextButton") -- ប៊ូតុងបើកវិញ
+
+-- Setup GUI
+ScreenGui.Parent = game.CoreGui
+ScreenGui.Name = "505_Push_V2"
+
+-- ផ្ទាំង Main
+MainFrame.Name = "Main"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+MainFrame.Position = UDim2.new(0.5, -110, 0.5, -80)
+MainFrame.Size = UDim2.new(0, 220, 0, 160)
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+UICorner.CornerRadius = UDim.new(0, 12)
+UICorner.Parent = MainFrame
+
+UIStroke.Parent = MainFrame
+UIStroke.Thickness = 2
+UIStroke.Color = Color3.fromRGB(0, 255, 255)
+
+-- ចំណងជើង
+Title.Parent = MainFrame
+Title.BackgroundTransparency = 1
+Title.Size = UDim2.new(1, -30, 0, 40)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.Font = Enum.Font.GothamBold
+Title.Text = "505 - PUSH"
+Title.TextColor3 = Color3.fromRGB(0, 255, 255)
+Title.TextSize = 18
+Title.TextXAlignment = Enum.TextXAlignment.Left
+
+-- ប៊ូតុងបង្រួម ( - )
+MiniBtn.Parent = MainFrame
+MiniBtn.BackgroundTransparency = 1
+MiniBtn.Position = UDim2.new(1, -35, 0, 5)
+MiniBtn.Size = UDim2.new(0, 30, 0, 30)
+MiniBtn.Font = Enum.Font.GothamBold
+MiniBtn.Text = "-"
+MiniBtn.TextColor3 = Color3.new(1, 1, 1)
+MiniBtn.TextSize = 25
+
+-- ប្រឡោះវាយឈ្មោះ
+NameBox.Parent = MainFrame
+NameBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+NameBox.Position = UDim2.new(0.1, 0, 0.35, 0)
+NameBox.Size = UDim2.new(0.8, 0, 0, 35)
+NameBox.Font = Enum.Font.Gotham
+NameBox.PlaceholderText = "Target (3 letters...)"
+NameBox.Text = ""
+NameBox.TextColor3 = Color3.new(1, 1, 1)
+local BoxCorner = Instance.new("UICorner")
+BoxCorner.CornerRadius = UDim.new(0, 8)
+BoxCorner.Parent = NameBox
+
+-- ប៊ូតុង Push
+PushBtn.Parent = MainFrame
+PushBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
+PushBtn.Position = UDim2.new(0.1, 0, 0.7, 0)
+PushBtn.Size = UDim2.new(0.8, 0, 0, 35)
+PushBtn.Font = Enum.Font.GothamBold
+PushBtn.Text = "EXECUTE PUSH"
+PushBtn.TextColor3 = Color3.fromRGB(15, 15, 15)
+local BtnCorner = Instance.new("UICorner")
+BtnCorner.CornerRadius = UDim.new(0, 8)
+BtnCorner.Parent = PushBtn
+
+-- ប៊ូតុងតូចសម្រាប់បើកវិញ (លាក់ទុកមុន)
+OpenBtn.Parent = ScreenGui
+OpenBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+OpenBtn.Position = UDim2.new(0, 10, 0.5, 0)
+OpenBtn.Size = UDim2.new(0, 80, 0, 30)
+OpenBtn.Font = Enum.Font.GothamBold
+OpenBtn.Text = "505 PUSH"
+OpenBtn.TextColor3 = Color3.fromRGB(0, 255, 255)
+OpenBtn.Visible = false
+local OpenCorner = Instance.new("UICorner")
+OpenCorner.CornerRadius = UDim.new(0, 8)
+OpenCorner.Parent = OpenBtn
+local OpenStroke = Instance.new("UIStroke")
+OpenStroke.Color = Color3.fromRGB(0, 255, 255)
+OpenStroke.Parent = OpenBtn
+
+-- មុខងារបង្រួម និង បើក
+MiniBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
+    OpenBtn.Visible = true
+end)
+
+OpenBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = true
+    OpenBtn.Visible = false
+end)
+
+-- មុខងារ Push
+PushBtn.MouseButton1Click:Connect(function()
+    local input = NameBox.Text:lower()
+    local target = nil
+    
+    if #input < 3 then 
+        PushBtn.Text = "NEED 3 LETTERS!"
+        task.wait(1)
+        PushBtn.Text = "EXECUTE PUSH"
+        return 
+    end
+
+    for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+        if string.find(player.Name:lower(), input) or string.find(player.DisplayName:lower(), input) then
+            target = player
+            break
+        end
+    end
+
+    if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+        local args = {
+            [1] = target.Character.HumanoidRootPart,
+            [2] = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -2)
+        }
+        
+        local pushEvent = game:GetService("Players").LocalPlayer.Character:FindFirstChild("Push") and game:GetService("Players").LocalPlayer.Character.Push:FindFirstChild("PushEvent")
+        
+        if pushEvent then
+            pushEvent:FireServer(unpack(args))
+            PushBtn.Text = "PUSHED!"
+            PushBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+        end
+    else
+        PushBtn.Text = "NOT FOUND!"
+        PushBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+    end
+    
+    task.wait(1)
+    PushBtn.Text = "EXECUTE PUSH"
+    PushBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
+end)
