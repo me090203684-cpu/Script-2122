@@ -1,0 +1,98 @@
+local ScreenGui = Instance.new("ScreenGui")
+local HUDFrame = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local UIListLayout = Instance.new("UIListLayout")
+
+-- Setup GUI 505-WQ
+ScreenGui.Parent = game.CoreGui
+HUDFrame.Parent = ScreenGui
+HUDFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+HUDFrame.BackgroundTransparency = 0.5
+HUDFrame.Position = UDim2.new(0.02, 0, 0.3, 0)
+HUDFrame.Size = UDim2.new(0, 150, 0, 160)
+
+local UICorner = Instance.new("UICorner")
+UICorner.Parent = HUDFrame
+local UIStroke = Instance.new("UIStroke")
+UIStroke.Color = Color3.fromRGB(255, 0, 0) -- ពណ៌ក្រហម
+UIStroke.Thickness = 2
+UIStroke.Parent = HUDFrame
+
+Title.Parent = HUDFrame
+Title.Size = UDim2.new(1, 0, 0, 35)
+Title.Text = "505-WQ"
+Title.TextColor3 = Color3.fromRGB(255, 0, 0)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 16
+Title.BackgroundTransparency = 1
+
+UIListLayout.Parent = HUDFrame
+UIListLayout.Padding = UDim.new(0, 5)
+UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+
+-- បង្កើត Slot P, F, O
+local function CreateSlot(name)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0.85, 0, 0, 35)
+    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    btn.Text = "[ ] " .. name
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.Font = Enum.Font.GothamBold
+    btn.Parent = HUDFrame
+    local bc = Instance.new("UICorner")
+    bc.CornerRadius = UDim.new(0, 6)
+    bc.Parent = btn
+    return btn
+end
+
+local SlotP = CreateSlot("P") -- ស៊ីផ្លេខ្លាំង (Loud Horn)
+local SlotF = CreateSlot("F") -- ចេញឡានគ្រប់គ្នា (Mass Spawn)
+local SlotO = CreateSlot("O") -- ទម្លាក់គ្រប់គ្នា (Exit Seat)
+
+local flags = {P = false, F = false, O = false}
+
+local function Toggle(btn, key, label)
+    flags[key] = not flags[key]
+    btn.Text = flags[key] and "[X] " .. label or "[ ] " .. label
+    btn.BackgroundColor3 = flags[key] and Color3.fromRGB(200, 0, 0) or Color3.fromRGB(30, 30, 30)
+end
+
+SlotP.MouseButton1Click:Connect(function() Toggle(SlotP, "P", "P") end)
+SlotF.MouseButton1Click:Connect(function() Toggle(SlotF, "F", "F") end)
+SlotO.MouseButton1Click:Connect(function() Toggle(SlotO, "O", "O") end)
+
+-- Main Loop
+task.spawn(function()
+    while true do
+        local cf = workspace:FindFirstChild("CarFolder")
+        
+        -- Slot P: ស៊ីផ្លេឱ្យឮខ្លាំង (បាញ់ព្រមគ្នា មិនមែនបាញ់ដាច់ៗ)
+        if flags.P and cf then
+            for _, car in pairs(cf:GetChildren()) do
+                local r = car:FindFirstChild("Remotes") and car.Remotes:FindFirstChild("HornEvent")
+                if r then
+                    -- បាញ់ ៥ ដងព្រមគ្នា ដើម្បីឱ្យសំឡេងវាជាន់គ្នាឮខ្លាំង
+                    for i = 1, 5 do r:FireServer() end
+                end
+            end
+        end
+
+        -- Slot F: Mass Spawn All
+        if flags.F then
+            for _, p in pairs(game.Players:GetPlayers()) do
+                game:GetService("ReplicatedStorage").DevEvent.CarSpawn:FireServer("Dmex2025")
+            end
+        end
+
+        -- Slot O: Exit Seat
+        if flags.O and cf then
+            for _, car in pairs(cf:GetChildren()) do
+                local r = car:FindFirstChild("Remotes") and car.Remotes:FindFirstChild("ExitSeat")
+                if r then r:FireServer() end
+            end
+        end
+
+        task.wait(0.5) -- កំណត់ល្បឿនរង់ចាំកុំឱ្យវា Reset សំឡេងលឿនពេក
+    end
+end)
+                                
