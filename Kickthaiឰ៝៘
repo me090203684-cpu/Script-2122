@@ -1,0 +1,65 @@
+-- [[ 505-WE MENU - SIMPLE VERSION ]] --
+
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "505-WE HUD",
+   LoadingTitle = "505-WE Exploit",
+   LoadingSubtitle = "by 505-code",
+   ConfigurationSaving = {
+      Enabled = false
+   },
+   KeySystem = false 
+})
+
+local MainTab = Window:CreateTab("Main", 4483362458)
+local Section = MainTab:CreateSection("Exploit Buttons")
+
+_G.AutoSpamCarry = false
+
+-- ប៊ូតុង F1: សម្រាប់ Spam គ្រប់គ្នា (ចុចបើក/បិទ)
+MainTab:CreateToggle({
+   Name = "F1",
+   CurrentValue = false,
+   Flag = "F1_Toggle", 
+   Callback = function(Value)
+      _G.AutoSpamCarry = Value
+      if Value then
+          task.spawn(function()
+              while _G.AutoSpamCarry do
+                  for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+                      if player ~= game:GetService("Players").LocalPlayer then
+                          pcall(function()
+                              local args = {
+                                  "Accept",
+                                  player
+                              }
+                              game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Carrying"):FireServer(unpack(args))
+                          end)
+                      end
+                  end
+                  task.wait(0.1)
+              end
+          end)
+      end
+   end,
+})
+
+-- ប៊ូតុង F2: សម្រាប់ Spam គោលដៅជាក់លាក់
+MainTab:CreateButton({
+   Name = "F2",
+   Callback = function()
+      local args = {
+          "Accept",
+          game:GetService("Players"):WaitForChild("fah198823")
+      }
+      game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("Carrying"):FireServer(unpack(args))
+   end,
+})
+
+Rayfield:Notify({
+   Title = "505-WE Ready",
+   Content = "F1 and F2 are ready to use!",
+   Duration = 5,
+   Image = 4483362458,
+})
